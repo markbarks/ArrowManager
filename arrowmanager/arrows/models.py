@@ -5,7 +5,7 @@ class Arrow(SurrogatePK, Model):
     """Arrow model """
 
     name = Column(db.String())
-    image_tag = Column(db.String())
+    image = Column(db.String())
 
     client = Column(db.String())  # todo: relationship
     project = Column(db.String())  # todo: relationship
@@ -19,5 +19,5 @@ class Arrow(SurrogatePK, Model):
         return {
             'id': str(self.id),
             'name': str(self.name),
-            'image_tag': self.image_tag
+            'image': self.image
         }
