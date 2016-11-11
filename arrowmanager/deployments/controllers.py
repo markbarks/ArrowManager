@@ -1,5 +1,4 @@
-from arrowmanager import helpers
-from . import models
+from arrowmanager import helpers, models
 
 
 def is_an_available_username(username):

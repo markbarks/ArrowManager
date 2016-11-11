@@ -24,3 +24,5 @@ requirements:
 
   test:
     - pytest
+    - factory-boy # conda-forge
+    - webtest

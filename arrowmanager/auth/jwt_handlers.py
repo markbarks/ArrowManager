@@ -19,9 +19,9 @@ def set_jwt_handlers(jwt):
             return user
         return None
 
-    @jwt.error_handler
-    def error_handler(error):
-        return 'Auth Failed: {}'.format(error.description), 400
+    # @jwt.error_handler
+    # def error_handler(error):
+    #     return 'Auth Failed: {}'.format(error.description), 400
 
     @jwt.payload_handler
     def make_payload(user):

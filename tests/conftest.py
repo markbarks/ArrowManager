@@ -1,37 +1,51 @@
+# -*- coding: utf-8 -*-
+"""Defines fixtures available to all tests."""
+
 import pytest
-from arrowmanager import create_app
+from webtest import TestApp
+
+from arrowmanager.app import create_app
+from arrowmanager.database import db as _db
+from arrowmanager.settings import TestConfig
+
+from .factories import GroupFactory
 
 
-@pytest.fixture(scope='module')
-def app(request):
-    """Creates a flask.Flask arrowmanager with the 'development' config/context.
-
-    :request: test request
-    :returns: flask.Flask object
-
-    """
-
-    app = create_app('development')
-    ctx = app.app_context()
-
+@pytest.yield_fixture(scope='function')
+def app():
+    """An application for the tests."""
+    _app = create_app(TestConfig)
+    ctx = _app.test_request_context()
     ctx.push()
 
-    def tear_down():
-        ctx.pop()
+    yield _app
 
-    request.addfinalizer(tear_down)
-    return app
+    ctx.pop()
+
+
+@pytest.fixture(scope='function')
+def testapp(app):
+    """A Webtest app."""
+    return TestApp(app)
+
+
+@pytest.yield_fixture(scope='function')
+def db(app):
+    """A database for the tests."""
+    _db.app = app
+    with app.app_context():
+        _db.create_all()
+
+    yield _db
+
+    # Explicitly close DB connection
+    _db.session.close()
+    _db.drop_all()
 
 
 @pytest.fixture
-def client(app):
-    """Creates a flask.Flask test_client object
-
-    :arrowmanager: fixture that provided the flask.Flask arrowmanager
-    :returns: flask.Flask test_client object
-
-    """
-
-    return app.test_client()
-
-from .mocks.users import mock_user  # noqa
+def group(db):
+    """A user for the tests."""
+    user = GroupFactory(password='myprecious')
+    db.session.commit()
+    return user
