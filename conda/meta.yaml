@@ -1,0 +1,26 @@
+package:
+  name: arrowmanager
+  version: 0.1
+
+source:
+  path: ..
+
+requirements:
+  build:
+    - python >=3
+    - setuptools
+    - sqlalchemy
+    - flask
+    - flask-restful # conda-forge
+    - flask-script # conda-forge
+    - passlib
+#    - pip install flask-jwt
+#    - pip install flask-sqlalchemy
+#    - pip install pykube
+
+  run:
+    - python
+    - click
+
+  test:
+    - pytest
