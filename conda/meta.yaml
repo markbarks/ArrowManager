@@ -16,6 +16,7 @@ requirements:
     - passlib
 #    - pip install flask-jwt
 #    - pip install flask-sqlalchemy
+#    - pip install flask-caching
 #    - pip install pykube
 
   run:
@@ -24,5 +25,5 @@ requirements:
 
   test:
     - pytest
-    - factory-boy # conda-forge
+    - factory_boy # conda-forge
     - webtest

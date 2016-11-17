@@ -8,7 +8,7 @@ from arrowmanager.app import create_app
 from arrowmanager.database import db as _db
 from arrowmanager.settings import TestConfig
 
-from .factories import GroupFactory
+from .factories import GroupFactory, ApplicationFactory
 
 
 @pytest.yield_fixture(scope='function')
@@ -45,7 +45,16 @@ def db(app):
 
 @pytest.fixture
 def group(db):
-    """A user for the tests."""
-    user = GroupFactory(password='myprecious')
+    """A group for the tests."""
+    group = GroupFactory()
     db.session.commit()
-    return user
+    return group
+
+
+@pytest.fixture
+def application(db):
+    """A application for the tests."""
+    application = ApplicationFactory()
+
+    db.session.commit()
+    return application

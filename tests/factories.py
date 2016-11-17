@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """Factories to help in tests."""
-from factory import PostGenerationMethodCall, Sequence
+from factory import PostGenerationMethodCall, Sequence, SubFactory
 from factory.alchemy import SQLAlchemyModelFactory
 
 from arrowmanager.database import db
-from arrowmanager.models import Group, Application, Build, Deployment
+from arrowmanager.models import Group, User, Application
 
 
 class BaseFactory(SQLAlchemyModelFactory):
@@ -20,6 +20,28 @@ class BaseFactory(SQLAlchemyModelFactory):
 class GroupFactory(BaseFactory):
     """User factory."""
 
+    name = Sequence(lambda n: 'name{0}'.format(n))
+
+    class Meta:
+        """Factory configuration."""
+        model = Group
+
+
+class ApplicationFactory(BaseFactory):
+    """User factory."""
+
+    name = Sequence(lambda n: 'name{0}'.format(n))
+    repo = Sequence(lambda n: 'http://repo{0}.git'.format(n))
+    group = SubFactory(GroupFactory)
+
+    class Meta:
+        """Factory configuration."""
+        model = Application
+
+
+class UserFactory(BaseFactory):
+    """User factory."""
+
     username = Sequence(lambda n: 'user{0}'.format(n))
     email = Sequence(lambda n: 'user{0}@example.com'.format(n))
     password = PostGenerationMethodCall('set_password', 'example')
@@ -27,4 +49,4 @@ class GroupFactory(BaseFactory):
 
     class Meta:
         """Factory configuration."""
-        model = Group
+        model = User
