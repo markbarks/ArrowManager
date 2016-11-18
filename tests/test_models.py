@@ -67,7 +67,7 @@ class TestGroup:
         #     assert role in group.roles
 
 
-@pytest.mark.usefixtures('group')
+@pytest.mark.usefixtures('db')
 class TestApplication:
     """Group tests."""
 
@@ -81,7 +81,7 @@ class TestApplication:
         assert retrieved == application
 
 
-@pytest.mark.usefixtures(['application'])
+@pytest.mark.usefixtures('db')
 class TestBuild:
     """Group tests."""
 
@@ -89,7 +89,7 @@ class TestBuild:
         build = Build(application, version=1,
                       image="eu.gcr.io/arrow/twexcel",
                       buildtime=datetime.now())
-        # build.save()
-        #
-        # retrieved = Build.get_by_id(build.id)
-        # assert retrieved == build
+        build.save()
+
+        retrieved = Build.get_by_id(build.id)
+        assert retrieved == build
