@@ -18,10 +18,10 @@ class Config(object):
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    JWT_AUTH_URL_RULE = '/api/auth',
+    JWT_AUTH_URL_RULE = '/api/auth'
     JWT_EXPIRATION_DELTA = datetime.timedelta(days=1)
-    HASH_ALGORITHM = 'SHA512',
-    HASH_SALT = 'StevieTheWonderCat',
+    HASH_ALGORITHM = 'SHA512'
+    HASH_SALT = 'StevieTheWonderCat'
 
 
 class ProdConfig(Config):

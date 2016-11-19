@@ -37,8 +37,8 @@ def register_extensions(app):
     # debug_toolbar.init_app(app)
     migrate.init_app(app, db)
 
-    # jwt_handlers.set_jwt_handlers(jwt)
-    # jwt.init_app(app)
+    jwt_handlers.set_jwt_handlers(jwt)
+    jwt.init_app(app)
 
     return None
 
@@ -55,14 +55,14 @@ def register_blueprints(app):
 def register_errorhandlers(app):
     """Register error handlers."""
 
-    def render_error(error):
-        """Render error template."""
-        # If a HTTPException, pull the `code` attribute; default to 500
-        error_code = getattr(error, 'code', 500)
-        return render_template('{0}.html'.format(error_code)), error_code
-
-    for errcode in [401, 404, 500]:
-        app.errorhandler(errcode)(render_error)
+    # def render_error(error):
+    #     """Render error template."""
+    #     # If a HTTPException, pull the `code` attribute; default to 500
+    #     error_code = getattr(error, 'code', 500)
+    #     return render_template('{0}.html'.format(error_code)), error_code
+    #
+    # for errcode in [401, 404, 500]:
+    #     app.errorhandler(errcode)(render_error)
     return None
 
 
