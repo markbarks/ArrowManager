@@ -8,7 +8,7 @@ from arrowmanager.app import create_app
 from arrowmanager.database import db as _db
 from arrowmanager.settings import TestConfig
 
-from .factories import GroupFactory, ApplicationFactory
+from .factories import GroupFactory, ApplicationFactory, UserFactory
 
 
 @pytest.yield_fixture(scope='function')
@@ -58,3 +58,23 @@ def application(db):
 
     db.session.commit()
     return application
+
+
+@pytest.fixture
+def user(db):
+    """A application for the tests."""
+    user = UserFactory()
+
+    db.session.commit()
+    return user
+
+
+@pytest.fixture
+def client(app):
+    """Creates a flask.Flask test_client object
+    :app: fixture that provided the flask.Flask app
+    :returns: flask.Flask test_client object
+    """
+
+    return app.test_client()
+

@@ -1,4 +1,5 @@
 from arrowmanager import helpers, models
+from arrowmanager.models import User
 
 
 def is_an_available_username(username):
@@ -18,13 +19,15 @@ def get_users(username=None):
     :returns: a dict with the operation result
 
     """
-    query = {} if not username else {'username': username}
-    users = models.User.objects(**query).all()
+    # query = {} if not username else {'username': username}
+    # users = models.User.objects(**query).all()
+
+    users = User.query.all()
 
     if not users:
         return {'no-data': ''}
 
-    return {'success': [u.to_json2() for u in users]}
+    return {'success': [u.to_json() for u in users]}
 
 
 def create_or_update_user(username, password, user_id=None):

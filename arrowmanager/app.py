@@ -3,9 +3,9 @@
 from flask import Flask, render_template
 
 from arrowmanager import commands, arrows
-from arrowmanager.auth import jwt_handlers
 # from arrowmanager.assets import assets
-from arrowmanager.extensions import cache, db, jwt, migrate
+from arrowmanager.auth import auth
+from arrowmanager.extensions import cache, db, jwt, migrate, bcrypt
 # from arrowmanager.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate
 from arrowmanager.settings import ProdConfig
 
@@ -29,15 +29,13 @@ def create_app(config_object=ProdConfig):
 def register_extensions(app):
     """Register Flask extensions."""
     # assets.init_app(app)
-    # bcrypt.init_app(app)
+    bcrypt.init_app(app)
     cache.init_app(app)
     db.init_app(app)
     # csrf_protect.init_app(app)
     # login_manager.init_app(app)
     # debug_toolbar.init_app(app)
     migrate.init_app(app, db)
-
-    jwt_handlers.set_jwt_handlers(jwt)
     jwt.init_app(app)
 
     return None
@@ -46,6 +44,7 @@ def register_extensions(app):
 def register_blueprints(app):
     """Register Flask blueprints."""
     app.register_blueprint(arrows.blueprint)
+    app.register_blueprint(auth)
     return None
 
 

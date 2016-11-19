@@ -9,18 +9,19 @@ def get_jwt_auth_header(username, password, client):
     """
 
     payload = {'username': username, 'password': password}
-    auth_response = client.post('/api/auth', data=json.dumps(payload))
+    auth_response = client.post('/api/auth', data=json.dumps(payload),
+                                content_type='application/json')
 
     if auth_response.status_code != 200:
         raise RuntimeError(auth_response.data.decode('utf-8'))
 
     return {
         'Authorization': 'Bearer {}'.format(
-            json.loads(auth_response.data.decode('utf-8'))['token'])
+            json.loads(auth_response.data.decode('utf-8'))['access_token'])
     }
 
 
-def jrequest(method, url, client, headers={}, data=None):
+def jrequest(method, url, client, headers=None, data=None):
     """Executes json requests.
 
     :method: 'GET', 'POST', 'PUT' or 'DELETE' (case sensitive)
@@ -33,6 +34,8 @@ def jrequest(method, url, client, headers={}, data=None):
 
     """
 
+    if headers is None:
+        headers = {}
     allowed_methods = {
         'GET': lambda: client.get(url, headers=headers),
         'POST': lambda: client.post(url, headers=headers, data=data),

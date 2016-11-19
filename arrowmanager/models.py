@@ -2,7 +2,7 @@ from datetime import datetime
 
 from arrowmanager.database import SurrogatePK, Model, Column
 from arrowmanager.database import reference_col, relationship
-from arrowmanager.extensions import db
+from arrowmanager.extensions import db, bcrypt
 
 
 # class User(UserMixin, SurrogatePK, Model):
@@ -20,30 +20,36 @@ class User(SurrogatePK, Model):
     active = Column(db.Boolean(), default=False)
     is_admin = Column(db.Boolean(), default=False)
 
-    # def __init__(self, username, email, password=None, **kwargs):
-    #     """Create instance."""
-    #     db.Model.__init__(self, username=username, email=email, **kwargs)
-    #     if password:
-    #         self.set_password(password)
-    #     else:
-    #         self.password = None
-    #
-    # def set_password(self, password):
-    #     """Set password."""
-    #     self.password = bcrypt.generate_password_hash(password)
-    #
-    # def check_password(self, value):
-    #     """Check password."""
-    #     return bcrypt.check_password_hash(self.password, value)
-    #
-    # @property
-    # def full_name(self):
-    #     """Full user name."""
-    #     return '{0} {1}'.format(self.first_name, self.last_name)
-    #
-    # def __repr__(self):
-    #     """Represent instance as a unique string."""
-    #     return '<User({username!r})>'.format(username=self.username)
+    def __init__(self, username, email, password=None, **kwargs):
+        """Create instance."""
+        db.Model.__init__(self, username=username, email=email, **kwargs)
+        if password:
+            self.set_password(password)
+        else:
+            self.password = None
+
+    def set_password(self, password):
+        """Set password."""
+        self.password = bcrypt.generate_password_hash(password)
+
+    def check_password(self, value):
+        """Check password."""
+        return bcrypt.check_password_hash(self.password, value)
+
+    @property
+    def full_name(self):
+        """Full user name."""
+        return '{0} {1}'.format(self.first_name, self.last_name)
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+        }
+
+    def __repr__(self):
+        """Represent instance as a unique string."""
+        return '<User({username!r})>'.format(username=self.username)
 
 
 class Group(SurrogatePK, Model):
