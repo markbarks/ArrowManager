@@ -16,6 +16,7 @@ requirements:
     - passlib
 #    - pip install flask-jwt
 #    - pip install flask-sqlalchemy
+#    - pip install flask-migrate # conda-forge version is out of date
 #    - pip install flask-caching
 #    - pip install pykube
 

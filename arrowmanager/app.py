@@ -5,7 +5,7 @@ from flask import Flask, render_template
 from arrowmanager import commands, deployments
 from arrowmanager.auth import jwt_handlers
 # from arrowmanager.assets import assets
-from arrowmanager.extensions import cache, db, jwt
+from arrowmanager.extensions import cache, db, jwt, migrate
 # from arrowmanager.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate
 from arrowmanager.settings import ProdConfig
 
@@ -14,7 +14,7 @@ def create_app(config_object=ProdConfig):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
     :param config_object: The configuration object to use.
     """
-    app = Flask(__name__)
+    app = Flask(__name__.split('.')[0])
     app.config.from_object(config_object)
 
     register_extensions(app)
@@ -35,7 +35,7 @@ def register_extensions(app):
     # csrf_protect.init_app(app)
     # login_manager.init_app(app)
     # debug_toolbar.init_app(app)
-    # migrate.init_app(app, db)
+    migrate.init_app(app, db)
 
     # jwt_handlers.set_jwt_handlers(jwt)
     # jwt.init_app(app)
@@ -71,10 +71,10 @@ def register_shellcontext(app):
 
     def shell_context():
         """Shell context objects."""
-        # return {
-        #     'db': db,
-        #     'User': user.models.User}
-        pass
+        return {
+            'db': db
+        }
+        # 'User': user.models.User}
 
     app.shell_context_processor(shell_context)
 
