@@ -9,7 +9,7 @@ from arrowmanager.extensions import db
 class User(SurrogatePK, Model):
     """A user of the app."""
 
-    __tablename__ = 'users'
+    __tablename__ = 'user'
     username = Column(db.String(80), unique=True, nullable=False)
     email = Column(db.String(80), unique=True, nullable=False)
     #: The hashed password
