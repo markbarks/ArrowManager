@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Defines fixtures available to all tests."""
+import os
 
 import pytest
 from webtest import TestApp
@@ -78,3 +79,16 @@ def client(app):
 
     return app.test_client()
 
+
+@pytest.fixture
+def k8s():
+    from k8sclient.client import api_client
+    from k8sclient.client.apis import apiv_api
+    from tests.integration.test_k8sclient import K8S_ENDPOINT
+
+    k8s_conf = os.path.join(os.path.expanduser('~'), '.minikube')
+    k8s = api_client.ApiClient(host=K8S_ENDPOINT,
+                                      key_file=os.path.join(k8s_conf, 'apiserver.key'),
+                                      cert_file=os.path.join(k8s_conf, 'apiserver.crt'),
+                                      ca_certs=os.path.join(k8s_conf, 'ca.crt'))
+    return apiv_api.ApivApi(k8s)
