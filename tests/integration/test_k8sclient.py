@@ -1,16 +1,21 @@
+import os
 import uuid
 
 import pytest
 import urllib3
+from kubernetes import config, client
 
-K8S_HOST_PORT = '192.168.99.100:8443'
-K8S_ENDPOINT = 'https://{}'.format(K8S_HOST_PORT)
+
+def _k8s_endpoint():
+    config.load_kube_config(os.environ["HOME"] + '/.kube/config')
+    c = client.Configuration()
+    return c.host
 
 
 def _k8s_not_running():
     try:
         urllib3.disable_warnings()
-        urllib3.PoolManager().request('GET', K8S_ENDPOINT)
+        urllib3.PoolManager().request('GET', _k8s_endpoint())
         return False
     except urllib3.exceptions.HTTPError:
         return True
@@ -18,12 +23,12 @@ def _k8s_not_running():
 
 class TestK8sclient:
     @pytest.mark.skipif(_k8s_not_running(), reason="Kubernetes is not available")
-    def test_list_endpoints(self, k8s):
-        endpoints = k8s.list_endpoints()
+    def test_list_endpoints(self, k8s: client.CoreV1Api):
+        endpoints = k8s.list_endpoints_for_all_namespaces()
         assert len(endpoints.items) > 0
 
     @pytest.mark.skipif(_k8s_not_running(), reason="Kubernetes is not available")
-    def test_pod_apis(self, k8s):
+    def test_pod_apis(self, k8s: client.CoreV1Api):
         name = 'test-' + str(uuid.uuid4())
 
         pod_manifest = {'apiVersion': 'v1',
@@ -42,59 +47,63 @@ class TestK8sclient:
         assert name == resp.metadata.name
         assert resp.status.phase == 'Pending'
 
-        number_of_pods = len(k8s.list_pod().items)
+        number_of_pods = len(k8s.list_pod_for_all_namespaces().items)
         assert number_of_pods > 0
 
         resp = k8s.delete_namespaced_pod(name=name, body={},
                                          namespace='default')
 
     @pytest.mark.skipif(_k8s_not_running(), reason="Kubernetes is not available")
-    def test_service_apis(self, k8s):
+    def test_service_apis(self, k8s: client.CoreV1Api):
+        name = 'test-' + str(uuid.uuid4())
+
         service_manifest = {'apiVersion': 'v1',
                             'kind': 'Service',
-                            'metadata': {'labels': {'name': 'frontend'},
-                                         'name': 'frontend',
+                            'metadata': {'labels': {'name': name},
+                                         'name': name,
                                          'resourceversion': 'v1'},
                             'spec': {'ports': [{'name': 'port',
                                                 'port': 80,
                                                 'protocol': 'TCP',
                                                 'targetPort': 80}],
-                                     'selector': {'name': 'frontend'}}}
+                                     'selector': {'name': name}}}
 
         resp = k8s.create_namespaced_service(body=service_manifest,
                                              namespace='default')
-        assert 'frontend' == resp.metadata.name
+        assert name == resp.metadata.name
         # assert resp.status == 'Pending'
 
-        resp = k8s.read_namespaced_service(name='frontend',
+        resp = k8s.read_namespaced_service(name=name,
                                            namespace='default')
-        assert 'frontend' == resp.metadata.name
+        assert name == resp.metadata.name
         # assert resp.status is True
 
-        service_manifest['spec']['ports'] = [{'name': 'new',
-                                              'port': 8080,
-                                              'protocol': 'TCP',
-                                              'targetPort': 8080}]
-        resp = k8s.patch_namespaced_service(body=service_manifest,
-                                            name='frontend',
-                                            namespace='default')
-        assert 2 == len(resp.spec.ports)
+        # service_manifest['spec']['ports'] = [{'name': 'new',
+        #                                       'port': 8080,
+        #                                       'protocol': 'TCP',
+        #                                       'targetPort': 8080}]
+        # resp = k8s.patch_namespaced_service(body=service_manifest,
+        #                                     name=name,
+        #                                     namespace='default')
+        # assert 2 == len(resp.spec.ports)
         # assert resp.status is True
 
-        resp = k8s.delete_namespaced_service(name='frontend',
+        resp = k8s.delete_namespaced_service(name=name,
                                              namespace='default')
 
     @pytest.mark.skipif(_k8s_not_running(), reason="Kubernetes is not available")
-    def test_replication_controller_apis(self, k8s):
+    def test_replication_controller_apis(self, k8s: client.CoreV1Api):
+        name = 'test-' + str(uuid.uuid4())
+
         rc_manifest = {
             'apiVersion': 'v1',
             'kind': 'ReplicationController',
-            'metadata': {'labels': {'name': 'frontend'},
-                         'name': 'frontend'},
+            'metadata': {'labels': {'name': name},
+                         'name': name},
             'spec': {'replicas': 2,
-                     'selector': {'name': 'frontend'},
+                     'selector': {'name': name},
                      'template': {'metadata': {
-                         'labels': {'name': 'frontend'}},
+                         'labels': {'name': name}},
                          'spec': {'containers': [{
                              'image': 'nginx',
                              'name': 'nginx',
@@ -103,24 +112,25 @@ class TestK8sclient:
 
         resp = k8s.create_namespaced_replication_controller(
             body=rc_manifest, namespace='default')
-        assert 'frontend' == resp.metadata.name
+        assert name == resp.metadata.name
         assert 2 == resp.spec.replicas
 
         resp = k8s.read_namespaced_replication_controller(
-            name='frontend', namespace='default')
-        assert 'frontend' == resp.metadata.name
+            name=name, namespace='default')
+        assert name == resp.metadata.name
         assert 2 == resp.spec.replicas
 
         resp = k8s.delete_namespaced_replication_controller(
-            name='frontend', body={}, namespace='default')
+            name=name, body={}, namespace='default')
 
     @pytest.mark.skipif(_k8s_not_running(), reason="Kubernetes is not available")
-    def test_configmap_apis(self, k8s):
+    def test_configmap_apis(self, k8s: client.CoreV1Api):
+        name = 'test-' + str(uuid.uuid4())
         test_configmap = {
             "kind": "ConfigMap",
             "apiVersion": "v1",
             "metadata": {
-                "name": "test-configmap",
+                "name": name,
             },
             "data": {
                 "config.json": "{\"command\":\"/usr/bin/mysqld_safe\"}",
@@ -131,24 +141,23 @@ class TestK8sclient:
         resp = k8s.create_namespaced_config_map(
             body=test_configmap, namespace='default'
         )
-        assert 'test-configmap' == resp.metadata.name
+        assert name == resp.metadata.name
 
         resp = k8s.read_namespaced_config_map(
-            name='test-configmap', namespace='default')
-        assert 'test-configmap' == resp.metadata.name
+            name=name, namespace='default')
+        assert name == resp.metadata.name
 
-        test_configmap['data']['config.json'] = "{}"
-        resp = k8s.patch_namespaced_config_map(
-            name='test-configmap', namespace='default', body=test_configmap)
+        # test_configmap['data']['config.json'] = "{}"
+        # resp = k8s.patch_namespaced_config_map(
+        #     name=name, namespace='default', body=test_configmap)
 
         resp = k8s.delete_namespaced_config_map(
-            name='test-configmap', body={}, namespace='default')
+            name=name, body={}, namespace='default')
 
     @pytest.mark.skipif(_k8s_not_running(), reason="Kubernetes is not available")
-    def test_node_apis(self, k8s):
-
-        for item in k8s.list_namespaced_node().items:
-            node = k8s.read_namespaced_node(name=item.metadata.name)
+    def test_node_apis(self, k8s: client.CoreV1Api):
+        for item in k8s.list_node().items:
+            node = k8s.read_node(name=item.metadata.name)
             # assert len(node.metadata.labels) > 0
             # assert isinstance(node.metadata.labels, dict) is True
 
