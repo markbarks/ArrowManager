@@ -36,6 +36,11 @@ class User(SurrogatePK, Model):
         """Check password."""
         return bcrypt.check_password_hash(self.password, value)
 
+    @cache.memoize(50)
+    def has_membership(self, role_id):
+        return Group.query.filter_by(user=self, role_id=role_id).count() >= 1
+
+
     @property
     def full_name(self):
         """Full user name."""
