@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from arrowmanager import helpers
 from . import controllers
@@ -31,6 +31,7 @@ class ArrowsAPI(Resource):
         :returns: One or all available users.
 
         """
+        username = get_jwt_identity()
 
         return controllers.get_users(username)
 
@@ -64,13 +65,15 @@ class ArrowAPI(Resource):
         """
 
         parse = post_put_parser()
-        parse.add_argument('user_id', type=str, location='json', required=True)
+        parse.add_argument('user_id', type=str,
+                           location='json', required=True)
         args = parse.parse_args()
 
         username, password = args['username'], args['password']
         user_id = args['user_id']
 
-        return controllers.create_or_update_user(username, password, user_id)
+        return controllers.create_or_update_user(username,
+                                                 password, user_id)
 
     @jwt_required
     @helpers.standardize_api_response
