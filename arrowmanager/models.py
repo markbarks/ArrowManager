@@ -20,6 +20,10 @@ class User(SurrogatePK, Model):
     active = Column(db.Boolean(), default=False)
     is_admin = Column(db.Boolean(), default=False)
 
+    # Relationships
+    roles = relationship('Role', secondary='user_roles',
+                         backref=db.backref('users', lazy='dynamic'))
+
     def __init__(self, username, email, password=None, **kwargs):
         """Create instance."""
         db.Model.__init__(self, username=username, email=email, **kwargs)
@@ -36,9 +40,9 @@ class User(SurrogatePK, Model):
         """Check password."""
         return bcrypt.check_password_hash(self.password, value)
 
-    @cache.memoize(50)
-    def has_membership(self, role_id):
-        return Group.query.filter_by(user=self, role_id=role_id).count() >= 1
+    # @cache.memoize(50)
+    # def has_membership(self, role_id):
+    #     return Group.query.filter_by(user=self, role_id=role_id).count() >= 1
 
 
     @property
@@ -55,6 +59,20 @@ class User(SurrogatePK, Model):
     def __repr__(self):
         """Represent instance as a unique string."""
         return '<User({username!r})>'.format(username=self.username)
+
+
+# https://pythonhosted.org/Flask-User/data_models.html#user-roles-datamodel
+# Define the Role DataModel
+class Role(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(50), unique=True)
+
+
+# Define the UserRoles DataModel
+class UserRoles(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE'))
+    role_id = db.Column(db.Integer(), db.ForeignKey('role.id', ondelete='CASCADE'))
 
 
 class Group(SurrogatePK, Model):
