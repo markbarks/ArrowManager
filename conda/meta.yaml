@@ -13,11 +13,13 @@ requirements:
     - flask
     - flask-restful # conda-forge
     - flask-script # conda-forge
+    - flask-assets # conda-forge
     - passlib
 #    - pip install flask-jwt-extended
 #    - pip install flask-sqlalchemy
 #    - pip install flask-migrate # conda-forge version is out of date
 #    - pip install flask-caching
+#    - pip install Flask-Stormpath
 #    - pip install git+https://github.com/kubernetes-incubator/client-python.git
 
   run:

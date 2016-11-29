@@ -3,11 +3,15 @@
 from flask_bcrypt import Bcrypt
 from flask_caching import Cache
 from flask_jwt_extended import JWTManager
+from flask_wtf.csrf import CsrfProtect
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_stormpath import StormpathManager
 
 bcrypt = Bcrypt()
+csrf_protect = CsrfProtect()
 jwt = JWTManager()
 db = SQLAlchemy()
 migrate = Migrate()
 cache = Cache()
+stormpath_manager = StormpathManager()

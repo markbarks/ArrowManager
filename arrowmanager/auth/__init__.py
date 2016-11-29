@@ -7,6 +7,21 @@ from arrowmanager.models import User
 auth = Blueprint('auth', __name__, url_prefix='/api')
 
 
+# This method will get whatever object is passed into the
+# create_access_token method.
+# @jwt.user_claims_loader
+def add_claims_to_access_token(user):
+    return {'roles': user.roles}
+
+
+# This method will also get whatever object is passed into the
+# create_access_token method, and let us define what the identity
+# should be for this object
+# @jwt.user_identity_loader
+def user_identity_lookup(user):
+    return user.username
+
+
 # Provide a method to create access tokens. The create_access_token()
 # function is used to actually generate the token
 
