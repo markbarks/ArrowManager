@@ -79,9 +79,14 @@ def client(app):
 
     return app.test_client()
 
-
 @pytest.fixture
 def k8s():
     from kubernetes import client, config
     config.load_kube_config(os.environ["HOME"] + '/.kube/config')
     return client.CoreV1Api()
+
+@pytest.fixture
+def k8s_extensions():
+    from kubernetes import client, config
+    config.load_kube_config(os.environ["HOME"] + '/.kube/config')
+    return client.ExtensionsV1beta1Api()

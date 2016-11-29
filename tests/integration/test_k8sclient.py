@@ -161,6 +161,14 @@ class TestK8sclient:
             # assert len(node.metadata.labels) > 0
             # assert isinstance(node.metadata.labels, dict) is True
 
+    @pytest.mark.skipif(_k8s_not_running(), reason="Kubernetes is not available")
+    def test_ingress_apis(self, k8s: client.ExtensionsV1beta1Api):
+        k8s.patch_namespaced_ingress_status_with_http_info()
+            # node = k8s.read_node(name=item.metadata.name)
+            # assert len(node.metadata.labels) > 0
+            # assert isinstance(node.metadata.labels, dict) is True
+
+
 # class TestK8sclientBeta(base.TestCase):
 #     @pytest.mark.skipif(
 #         _is_k8s_running(), reason="Kubernetes is not available")
@@ -173,7 +181,7 @@ class TestK8sclient:
 #             'spec': {
 #                 'template':
 #                     {'spec':
-#                         {'containers': [
+#                       {'containers': [
 #                             {'image': 'nginx',
 #                              'name': 'test-deployment',
 #                              'ports': [{'containerPort': 80}]
