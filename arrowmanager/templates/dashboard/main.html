@@ -1,6 +1,36 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>Welcome {{ current_user.username }}</h1>
-    <h3>This is the members-only page.</h3>
+
+    <div class="body-content">
+        <div class="row">
+            <h1>Pods > {{ organization }}</h1>
+
+            <table class="table">
+                <thead class="thead-inverse">
+                <tr>
+                    <td>Name</td>
+                    <td>Namespace</td>
+                    <td>Status</td>
+                    <td>Message</td>
+                    <td>Reason</td>
+                    <td>Start Time</td>
+                </tr>
+                </thead>
+
+                {% for item in pods.items %}
+                    <tr>
+                        <td>{{ item.metadata.name }}</td>
+                        <td>{{ item.metadata.namespace }}</td>
+                        <td>{{ item.status.phase }}</td>
+                        <td>{{ item.status.message }}</td>
+                        <td>{{ item.status.reason }}</td>
+                        <td>{{ item.status.start_time }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+
 {% endblock %}
 

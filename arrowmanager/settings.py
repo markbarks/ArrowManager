@@ -39,6 +39,8 @@ class ProdConfig(Config):
 
     ENV = 'prod'
     DEBUG = False
+    SERVER_NAME = 'gridarrow.io'
+
     SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/example'  # TODO: Change me
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
 
@@ -48,6 +50,8 @@ class DevConfig(Config):
 
     ENV = 'dev'
     DEBUG = True
+    SERVER_NAME = 'gridarrow.dev:5000'
+
     DB_NAME = 'dev.db'
     # Put the db file in project root
     DB_PATH = os.path.join(Config.PROJECT_ROOT, DB_NAME)

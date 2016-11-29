@@ -1,5 +1,14 @@
+import os
+
+from flask import current_app
+from kubernetes import client, config
+
 from arrowmanager import helpers, models
 from arrowmanager.models import User
+
+# TODO: Would be nice to create a Flask-Kube extension
+config.load_kube_config(os.environ["HOME"] + '/.kube/config')
+k8s = client.CoreV1Api()
 
 
 def is_an_available_username(username):
@@ -10,6 +19,14 @@ def is_an_available_username(username):
 
     """
     return models.User.objects(username=username).first() is None
+
+
+def get_pod_status(organisation):
+
+    # TODO: use this k8s.list_namespaced_pod()
+    # pods = k8s.list_pod_for_all_namespaces()
+    pods = k8s.list_namespaced_pod(namespace=organisation)
+    return pods
 
 
 def get_users(username=None):
