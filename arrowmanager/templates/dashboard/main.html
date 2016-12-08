@@ -3,7 +3,49 @@
 
     <div class="body-content">
         <div class="row">
-            <h1>Pods > {{ organization }}</h1>
+            <h1>Applications > {{ tenant }}</h1>
+
+            <table class="table">
+                <thead class="thead-inverse">
+                <tr>
+                    <td>Name</td>
+                    <td>Repo</td>
+                    <td>Builds</td>
+                </tr>
+                </thead>
+
+                {% for application in applications %}
+                    <tr>
+                        <td>{{ application.name }}</td>
+                        <td>{{ application.repo }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button type="button"
+                                        class="btn btn-default dropdown-toggle"
+                                        data-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false">
+                                    {{ application.builds[0] }} <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    {% for build in application.builds %}
+                                        <li>{{ build }} </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group" aria-label="...">
+                                <button type="button" class="btn btn-default">Start</button>
+                                <button type="button" class="btn btn-default">Stop</button>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+
+            <h1>Pods > {{ tenant }}</h1>
 
             <table class="table">
                 <thead class="thead-inverse">

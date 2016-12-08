@@ -21,6 +21,10 @@ class Application(SurrogatePK, Model):
         # tags =
         # deployments = relationship('Deployment', back_populates='application')
 
+    def __repr__(self):
+        return "{} / {}".format(self.name, self.repo)
+
+
 
 class Build(SurrogatePK, Model):
     __tablename__ = 'build'
@@ -43,6 +47,9 @@ class Build(SurrogatePK, Model):
                           image=image,
                           git_rev=git_rev,
                           buildtime=buildtime, **kwargs)
+
+    def __repr__(self):
+        return "{} / {}".format(self.image, self.buildtime)
 
 # class Deployment(SurrogatePK, Model):
 #     __tablename__ = 'deployment'

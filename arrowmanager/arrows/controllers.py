@@ -17,9 +17,5 @@ def get_pod_status(tenant):
 
 
 def get_applications(tenant):
-    try:
-        query = {'tenant': tenant}
-        result = models.Application.objects(**query)
-        return result
-    except Exception as e:
-        return {'error': 'Error during the operation: {}'.format(e)}
+    result = models.Application.query.filter_by(tenant=tenant).all()
+    return result
