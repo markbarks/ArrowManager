@@ -9,16 +9,16 @@ config.load_kube_config(os.environ["HOME"] + '/.kube/config')
 k8s = client.CoreV1Api()
 
 
-def get_pod_status(organisation):
+def get_pod_status(tenant):
     # TODO: use this k8s.list_namespaced_pod()
     # pods = k8s.list_pod_for_all_namespaces()
-    pods = k8s.list_namespaced_pod(namespace=organisation)
+    pods = k8s.list_namespaced_pod(namespace=tenant)
     return pods
 
 
-def get_applications(organisation):
+def get_applications(tenant):
     try:
-        query = {'org_id': organisation}
+        query = {'tenant': tenant}
         result = models.Application.objects(**query)
         return result
     except Exception as e:

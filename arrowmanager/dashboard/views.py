@@ -6,13 +6,13 @@ from arrowmanager.arrows import controllers
 blueprint = Blueprint('dashboard', __name__, static_folder='../static', url_prefix='/dashboard')
 
 
-@blueprint.route('/', subdomain="<organization>")
+@blueprint.route('/', subdomain="<tenant>")
 @login_required
-def main(organization):
-    pods = controllers.get_pod_status(organization)
+def main(tenant):
+    pods = controllers.get_pod_status(tenant)
 
     return render_template('dashboard/main.html',
-                           organization=organization,
+                           tenant=tenant,
                            pods=pods)
 
 
