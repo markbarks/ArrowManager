@@ -6,9 +6,7 @@ from arrowmanager import commands, arrows
 from arrowmanager import dashboard
 from arrowmanager.assets import assets
 from arrowmanager import public
-from arrowmanager.auth import auth
 from arrowmanager.extensions import cache, db, jwt, migrate, bcrypt, stormpath_manager, csrf_protect
-# from arrowmanager.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate
 from arrowmanager.settings import ProdConfig
 
 
@@ -48,7 +46,7 @@ def register_blueprints(app):
     app.register_blueprint(public.views.blueprint)
     app.register_blueprint(dashboard.views.blueprint)
     app.register_blueprint(arrows.blueprint)
-    app.register_blueprint(auth)
+    # app.register_blueprint(auth)
     return None
 
 
@@ -67,9 +65,9 @@ def register_errorhandlers(app):
 
 
 def register_jwt_helpers(app):
-    app.jwt.user_claims_loader(auth.add_claims_to_access_token)
-    app.jwt.user_identity_loader(auth.user_identity_lookup_to_access_token)
-
+    # app.jwt.user_claims_loader(auth.add_claims_to_access_token)
+    # app.jwt.user_identity_loader(auth.user_identity_lookup_to_access_token)
+    pass
 
 def register_shellcontext(app):
     """Register shell context objects."""

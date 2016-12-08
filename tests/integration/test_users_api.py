@@ -10,30 +10,30 @@ unauthorized_scenarios = [
 ]
 
 
-@pytest.mark.parametrize(
-    'method, url, error, status_code ', unauthorized_scenarios)
-def test_unauthorized_request(method, url, error, status_code, client):
-    response = jrequest(method, url, client)
-
-    assert response.status_code == status_code
-    assert json.loads(response.data.decode('utf-8'))['msg'] == error
-
-
-def test_get_users_without_username(client, user):
-    jwt_header = get_jwt_auth_header(user.username, 'fakepwd', client)
-    response = json.loads(jrequest(
-        'GET', '/api/arrows', client, jwt_header).data.decode('utf-8'))
-    response = json.loads(response)
-
-    expected = {
-        'status_code': 200,
-        'data': [{
-            'id': user.id,
-            'username': user.username
-        }],
-        'description': 'Successful Operation',
-    }
-    assert sorted(response.items()) == sorted(expected.items())
+# @pytest.mark.parametrize(
+#     'method, url, error, status_code ', unauthorized_scenarios)
+# def test_unauthorized_request(method, url, error, status_code, client):
+#     response = jrequest(method, url, client)
+#
+#     assert response.status_code == status_code
+#     assert json.loads(response.data.decode('utf-8'))['msg'] == error
+#
+#
+# def test_get_users_without_username(client, user):
+#     jwt_header = get_jwt_auth_header(user.username, 'fakepwd', client)
+#     response = json.loads(jrequest(
+#         'GET', '/api/arrows', client, jwt_header).data.decode('utf-8'))
+#     response = json.loads(response)
+#
+#     expected = {
+#         'status_code': 200,
+#         'data': [{
+#             'id': user.id,
+#             'username': user.username
+#         }],
+#         'description': 'Successful Operation',
+#     }
+#     assert sorted(response.items()) == sorted(expected.items())
 
 #
 #

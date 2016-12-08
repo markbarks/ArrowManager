@@ -64,7 +64,8 @@ class TestK8sclient:
     # def test_update_ingress(self):
 
 
-    @pytest.mark.skipif(_nghttpx_not_running(), reason="Kubernetes is not available")
+    # @pytest.mark.skipif(_nghttpx_not_running(), reason="Kubernetes is not available")
+    @pytest.mark.skip
     def test_update_backendconfig(self):
         conf = open('/Volumes/Users/markns/Projects/Alder/ArrowKube/nghttpx/nghttpx.conf').read()
 

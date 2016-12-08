@@ -28,6 +28,11 @@ class TestK8sclient:
         assert len(endpoints.items) > 0
 
     @pytest.mark.skipif(_k8s_not_running(), reason="Kubernetes is not available")
+    def test_deployment_apis(self, k8s: client.ExtensionsV1beta1Api):
+        # k8s.create_namespaced_deployment()
+        pass
+
+    @pytest.mark.skipif(_k8s_not_running(), reason="Kubernetes is not available")
     def test_pod_apis(self, k8s: client.CoreV1Api):
         name = 'test-' + str(uuid.uuid4())
 
@@ -49,12 +54,11 @@ class TestK8sclient:
 
         number_of_pods = len(k8s.list_pod_for_all_namespaces().items)
         assert number_of_pods > 0
-
-        resp = k8s.delete_namespaced_pod(name=name, body={},
-                                         namespace='default')
+        # resp = k8s.delete_namespaced_pod(name=name, body={},
+        #                                  namespace='default')
 
     @pytest.mark.skipif(_k8s_not_running(), reason="Kubernetes is not available")
-    def test_service_apis(self, k8s: client.CoreV1Api):
+    def test_service_apis(self, k8s: client.ExtensionsV1beta1Api):
         name = 'test-' + str(uuid.uuid4())
 
         service_manifest = {'apiVersion': 'v1',
@@ -163,7 +167,8 @@ class TestK8sclient:
 
     @pytest.mark.skipif(_k8s_not_running(), reason="Kubernetes is not available")
     def test_ingress_apis(self, k8s: client.ExtensionsV1beta1Api):
-        k8s.patch_namespaced_ingress_status_with_http_info()
+        # k8s.patch_namespaced_ingress_status_with_http_info()
+        pass
             # node = k8s.read_node(name=item.metadata.name)
             # assert len(node.metadata.labels) > 0
             # assert isinstance(node.metadata.labels, dict) is True

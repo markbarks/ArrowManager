@@ -1,106 +1,22 @@
-from datetime import datetime
-
 from arrowmanager.database import SurrogatePK, Model, Column
 from arrowmanager.database import reference_col, relationship
-from arrowmanager.extensions import db, bcrypt
-
-
-# class User(UserMixin, SurrogatePK, Model):
-class User(SurrogatePK, Model):
-    """A user of the app."""
-
-    __tablename__ = 'user'
-    username = Column(db.String(80), unique=True, nullable=False)
-    email = Column(db.String(80), unique=True, nullable=False)
-    #: The hashed password
-    password = Column(db.Binary(128), nullable=True)
-    created_at = Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    first_name = Column(db.String(30), nullable=True)
-    last_name = Column(db.String(30), nullable=True)
-    active = Column(db.Boolean(), default=False)
-    is_admin = Column(db.Boolean(), default=False)
-
-    # Relationships
-    roles = relationship('Role', secondary='user_roles',
-                         backref=db.backref('users', lazy='dynamic'))
-
-    def __init__(self, username, email, password=None, **kwargs):
-        """Create instance."""
-        db.Model.__init__(self, username=username, email=email, **kwargs)
-        if password:
-            self.set_password(password)
-        else:
-            self.password = None
-
-    def set_password(self, password):
-        """Set password."""
-        self.password = bcrypt.generate_password_hash(password)
-
-    def check_password(self, value):
-        """Check password."""
-        return bcrypt.check_password_hash(self.password, value)
-
-    # @cache.memoize(50)
-    # def has_membership(self, role_id):
-    #     return Group.query.filter_by(user=self, role_id=role_id).count() >= 1
-
-
-    @property
-    def full_name(self):
-        """Full user name."""
-        return '{0} {1}'.format(self.first_name, self.last_name)
-
-    def to_json(self):
-        return {
-            'id': self.id,
-            'username': self.username,
-        }
-
-    def __repr__(self):
-        """Represent instance as a unique string."""
-        return '<User({username!r})>'.format(username=self.username)
-
-
-# https://pythonhosted.org/Flask-User/data_models.html#user-roles-datamodel
-# Define the Role DataModel
-class Role(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(50), unique=True)
-
-
-# Define the UserRoles DataModel
-class UserRoles(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    user_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE'))
-    role_id = db.Column(db.Integer(), db.ForeignKey('role.id', ondelete='CASCADE'))
-
-
-class Group(SurrogatePK, Model):
-    __tablename__ = 'group'
-
-    name = Column(db.String())
-    applications = relationship('Application', back_populates='group')
-
-    def __init__(self, name, **kwargs):
-        """Create instance."""
-        db.Model.__init__(self, name=name, **kwargs)
+from arrowmanager.extensions import db
 
 
 class Application(SurrogatePK, Model):
     __tablename__ = 'application'
 
-    name = Column(db.String())
-    repo = Column(db.String())
+    tenant = Column(db.String(), nullable=False)
 
-    group_id = reference_col('group', nullable=False)
-    group = relationship('Group', back_populates='applications')
+    name = Column(db.String(), nullable=False)
+    repo = Column(db.String(), nullable=False)
 
     builds = relationship('Build', back_populates='application')
 
-    def __init__(self, name, repo, group, **kwargs):
+    def __init__(self, name, tenant, repo, **kwargs):
         """Create instance."""
-        db.Model.__init__(self, name=name, repo=repo,
-                          group=group, **kwargs)
+        db.Model.__init__(self, tenant=tenant, name=name, repo=repo,
+                          **kwargs)
 
         # tags =
         # deployments = relationship('Deployment', back_populates='application')
@@ -109,17 +25,23 @@ class Application(SurrogatePK, Model):
 class Build(SurrogatePK, Model):
     __tablename__ = 'build'
 
-    version = Column(db.String())
-    image = Column(db.String())
-    buildtime = Column(db.DateTime())
+    tenant = Column(db.String(), nullable=False)
+
+    git_rev = Column(db.String(), nullable=False)
+    image = Column(db.String(), nullable=False)
+    buildtime = Column(db.DateTime(), nullable=False)
+
+    # Probably Jenkins build number etc
 
     application_id = reference_col('application', nullable=False)
     application = relationship('Application', back_populates='builds')
 
-    def __init__(self, application, version, image, buildtime, **kwargs):
+    def __init__(self, application, image, git_rev, buildtime, **kwargs):
         """Create instance."""
-        db.Model.__init__(self, application=application,
-                          version=version, image=image,
+        db.Model.__init__(self, tenant=application.tenant,
+                          application=application,
+                          image=image,
+                          git_rev=git_rev,
                           buildtime=buildtime, **kwargs)
 
 # class Deployment(SurrogatePK, Model):
