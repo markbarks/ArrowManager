@@ -14,6 +14,7 @@ requirements:
     - flask-restful # conda-forge
     - flask-script # conda-forge
     - flask-assets # conda-forge
+    - flask-cors # conda-forge
     - passlib
 #    - pip install flask-jwt-extended
 #    - pip install flask-sqlalchemy

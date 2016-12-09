@@ -7,6 +7,7 @@ from flask_wtf.csrf import CsrfProtect
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_stormpath import StormpathManager
+from flask_cors import CORS
 
 bcrypt = Bcrypt()
 csrf_protect = CsrfProtect()
@@ -15,3 +16,4 @@ db = SQLAlchemy()
 migrate = Migrate()
 cache = Cache()
 stormpath_manager = StormpathManager()
+CORS = CORS()

@@ -6,7 +6,7 @@ from arrowmanager import commands, arrows
 from arrowmanager import dashboard
 from arrowmanager.assets import assets
 from arrowmanager import public
-from arrowmanager.extensions import cache, db, jwt, migrate, bcrypt, stormpath_manager, csrf_protect
+from arrowmanager.extensions import cache, db, jwt, migrate, bcrypt, stormpath_manager, csrf_protect, CORS
 from arrowmanager.settings import ProdConfig
 
 
@@ -33,6 +33,10 @@ def register_extensions(app):
     cache.init_app(app)
     db.init_app(app)
     csrf_protect.init_app(app)
+
+    # TODO: Read this https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
+    # TODO: And this: https://flask-cors.readthedocs.io/en/latest/
+    CORS.init_app(app)
     # login_manager.init_app(app)
     # debug_toolbar.init_app(app)
     migrate.init_app(app, db)
