@@ -22,18 +22,19 @@ def post_put_parser():
 class ArrowsAPI(Resource):
     """An API to get or create users."""
 
-    @jwt_required
-    @helpers.standardize_api_response
-    def get(self, username=None):
+    # @jwt_required
+    # @helpers.standardize_api_response
+    def get(self):
         """HTTP GET. Get one or all users.
 
         :username: a string valid as object id.
         :returns: One or all available users.
 
         """
-        username = get_jwt_identity()
+        # namespace = get_jwt_identity()
+        namespace = 'megacorp'
 
-        return controllers.get_users(username)
+        return controllers.get_pod_status(namespace)
 
     @jwt_required
     @helpers.standardize_api_response
