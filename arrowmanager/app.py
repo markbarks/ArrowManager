@@ -3,6 +3,8 @@
 from flask import Flask, render_template
 
 from arrowmanager import commands, arrows
+from arrowmanager import dashboard
+from arrowmanager import public
 from arrowmanager.assets import assets
 from arrowmanager.extensions import cache, db, jwt, migrate, bcrypt, csrf_protect, CORS
 from arrowmanager.settings import ProdConfig
@@ -45,8 +47,8 @@ def register_extensions(app):
 
 def register_blueprints(app):
     """Register Flask blueprints."""
-    # app.register_blueprint(public.views.blueprint)
-    # app.register_blueprint(dashboard.views.blueprint)
+    app.register_blueprint(public.views.blueprint)
+    app.register_blueprint(dashboard.views.blueprint)
     app.register_blueprint(arrows.blueprint)
 
     # app.register_blueprint(auth)
