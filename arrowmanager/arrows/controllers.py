@@ -13,7 +13,9 @@ def get_pod_status(namespace):
     ingress = k8s.list_namespaced_ingress(namespace=namespace)
     endpoints = [r.to_dict() for r in ingress.items[0].spec.rules]
 
-    return {'success': {'applications': endpoints}}
+    # Simplify while learning C# deserialization
+    # return {'success': {'applications': endpoints}}
+    return endpoints
 
 
 def get_applications(tenant):
