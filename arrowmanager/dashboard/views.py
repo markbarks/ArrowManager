@@ -3,12 +3,16 @@ from flask_stormpath import login_required, current_user
 
 from arrowmanager.arrows import controllers
 
-blueprint = Blueprint('dashboard', __name__, static_folder='../static', url_prefix='/dashboard')
+blueprint = Blueprint('dashboard', __name__,
+                      static_folder='../static',
+                      url_prefix='/dashboard')
 
 
-@blueprint.route('/', subdomain="<tenant>")
+@blueprint.route('/')
 @login_required
-def main(tenant):
+def main():
+    tenant = 'megacorp'
+
     pods = controllers.get_pod_status(tenant)
 
     applications = controllers.get_applications(tenant)
