@@ -10,11 +10,10 @@ k8s = client.ExtensionsV1beta1Api()
 
 
 def get_pod_status(namespace):
-    # TODO: use this k8s.list_namespaced_pod()
-    # pods = k8s.list_pod_for_all_namespaces()
-    pods = k8s.list_namespaced_ingress(namespace=namespace)
+    ingress = k8s.list_namespaced_ingress(namespace=namespace)
+    endpoints = [r.to_dict() for r in ingress.items[0].spec.rules]
 
-    return {'success': [u.to_dict() for u in pods.items]}
+    return {'success': {'applications': endpoints}}
 
 
 def get_applications(tenant):
