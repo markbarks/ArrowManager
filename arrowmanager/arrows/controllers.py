@@ -11,7 +11,19 @@ k8s = client.ExtensionsV1beta1Api()
 
 def get_pod_status(namespace):
     ingress = k8s.list_namespaced_ingress(namespace=namespace)
-    endpoints = [r.to_dict() for r in ingress.items[0].spec.rules]
+
+    endpoints = [
+        {"key": r.host.split(".")[0],
+         "host": r.host}
+        for r in ingress.items[0].spec.rules
+        ]
+
+    if 'FLASK_DEBUG' in os.environ:
+        import socket
+        myip = socket.gethostbyname(socket.gethostname())
+        endpoints.append({
+            "key": "devapp",
+            "host": "{}:50051".format(myip)})
 
     # Simplify while learning C# deserialization
     # return {'success': {'applications': endpoints}}
