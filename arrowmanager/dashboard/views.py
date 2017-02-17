@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template
-from flask_stormpath import login_required, current_user
 
 from arrowmanager.arrows import controllers
 
@@ -9,7 +8,6 @@ blueprint = Blueprint('dashboard', __name__,
 
 
 @blueprint.route('/')
-@login_required
 def main():
     tenant = 'megacorp'
 
@@ -24,6 +22,5 @@ def main():
 
 
 @blueprint.route('/welcome/')
-@login_required
 def welcome():
     return render_template('dashboard/welcome.html')

@@ -50,23 +50,23 @@
             <table class="table">
                 <thead class="thead-inverse">
                 <tr>
-                    <td>Name</td>
-                    <td>Namespace</td>
-                    <td>Status</td>
-                    <td>Message</td>
-                    <td>Reason</td>
-                    <td>Start Time</td>
+                    <td>Key</td>
+                    <td>Host</td>
+{#                    <td>Status</td>#}
+{#                    <td>Message</td>#}
+{#                    <td>Reason</td>#}
+{#                    <td>Start Time</td>#}
                 </tr>
                 </thead>
 
-                {% for item in pods.items %}
+                {% for item in pods %}
                     <tr>
-                        <td>{{ item.metadata.name }}</td>
-                        <td>{{ item.metadata.namespace }}</td>
-                        <td>{{ item.status.phase }}</td>
-                        <td>{{ item.status.message }}</td>
-                        <td>{{ item.status.reason }}</td>
-                        <td>{{ item.status.start_time }}</td>
+                        <td>{{ item.key }}</td>
+                        <td>{{ item.host }}</td>
+{#                        <td>{{ item.status.phase }}</td>#}
+{#                        <td>{{ item.status.message }}</td>#}
+{#                        <td>{{ item.status.reason }}</td>#}
+{#                        <td>{{ item.status.start_time }}</td>#}
                     </tr>
                 {% endfor %}
             </table>
