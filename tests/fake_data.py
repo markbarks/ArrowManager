@@ -29,39 +29,3 @@ def db(app):
     # Explicitly close DB connection
     _db.session.close()
 
-
-if __name__ == '__main__':
-    with app() as a, db(a):
-        application = Application(tenant='default',
-                                  name='TwExcel',
-                                  repo='https://github.com/markbarks/AlderExamples.git')
-        application.save()
-
-        build = Build(application=application,
-                      image="eu.gcr.io/gridarrow/twexcel:1",
-                      git_rev='646df370f851479d7423da324ec0b09116335584',
-                      buildtime=datetime.now())
-        build.save()
-
-        build = Build(application=application,
-                      image="eu.gcr.io/gridarrow/twexcel:2",
-                      git_rev='62419c58e12d242b9521a89ffcc390593e721569',
-                      buildtime=datetime.now() + timedelta(hours=1))
-        build.save()
-
-        application = Application(tenant='default',
-                                  name='Quandlex',
-                                  repo='https://github.com/markbarks/AlderExamples.git')
-        application.save()
-
-        build = Build(application=application,
-                      image="eu.gcr.io/gridarrow/quandlex:1",
-                      git_rev='646df370f851479d7423da324ec0b09116335584',
-                      buildtime=datetime.now())
-        build.save()
-
-        build = Build(application=application,
-                      image="eu.gcr.io/gridarrow/quandlex:2",
-                      git_rev='62419c58e12d242b9521a89ffcc390593e721569',
-                      buildtime=datetime.now() + timedelta(minutes=30))
-        build.save()
